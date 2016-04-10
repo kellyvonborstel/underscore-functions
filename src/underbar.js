@@ -43,7 +43,7 @@
     _.each(array, function(value, index) {
       if (value === target && result === -1) {
         result = index;
-      }      
+      }
     });
     return result;
   };
@@ -103,32 +103,19 @@
   // the accumulator and is never passed to the iterator. In other words, in
   // the case where a starting value is not passed, the iterator is not invoked
   // until the second element, with the first element as its second argument.
-  //  
-  // Example:
-  //   var numbers = [1,2,3];
-  //   var sum = _.reduce(numbers, function(total, number){
-  //     return total + number;
-  //   }, 0); // should be 6
-  //  
-  //   var identity = _.reduce([5], function(total, number){
-  //     return total + number * number;
-  //   }); // should be 5, regardless of the iterator function passed in
-  //          No accumulator is given so the first element is used.
   _.reduce = function(collection, iterator, accumulator) {
     if (arguments.length < 3) {
       var accumulator = collection[0];
       collection = collection.slice(1);
-    } 
+    }
     _.each(collection, function(item) {
       accumulator = iterator(accumulator, item);
     });
     return accumulator;
   };
 
-  // Determine if the array or object contains a given value (using `===`).
+  // Determines if the array or object contains a given value (using `===`).
   _.contains = function(collection, target) {
-    // TIP: Many iteration problems can be most easily expressed in
-    // terms of reduce(). Here's a freebie to demonstrate!
     return _.reduce(collection, function(wasFound, item) {
       if (wasFound) {
         return true;
@@ -137,16 +124,29 @@
     }, false);
   };
 
-
-  // Determine whether all of the elements match a truth test.
+  // Determines whether all of the elements match a truth test.
+  // If no iterator is provided, provide a default one.
   _.every = function(collection, iterator) {
-    // TIP: Try re-using reduce() here.
+    if (arguments.length < 2) {
+      var iterator = _.identity;
+    }
+    return _.reduce(collection, function(allTrue, element) {
+      if (!allTrue) {
+        return false;
+      }
+      return !!(iterator(element) && allTrue);
+    }, true);
   };
 
-  // Determine whether any of the elements pass a truth test. If no iterator is
-  // provided, provide a default one
+  // Determine whether any of the elements pass a truth test.
+  // If no iterator is provided, provide a default one.
   _.some = function(collection, iterator) {
-    // TIP: There's a very clever way to re-use every() here.
+    if (arguments.length < 2) {
+      var iterator = _.identity;
+    }
+    return !_.every(collection, function(element) {
+      return !iterator(element);
+    });
   };
 
 
