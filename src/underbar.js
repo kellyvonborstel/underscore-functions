@@ -48,21 +48,34 @@
     return result;
   };
 
-
-  // Return all elements of an array that pass a truth test.
+  // Returns all elements of an array that pass a truth test.
   _.filter = function(collection, test) {
+    var results = [];
+    _.each(collection, function(element) {
+      if (test(element)) {
+        results.push(element);
+      }
+    });
+    return results;
   };
 
-  // Return all elements of an array that don't pass a truth test.
+  // Returns all elements of an array that don't pass a truth test.
   _.reject = function(collection, test) {
-    // TIP: see if you can re-use _.filter() here, without simply
-    // copying code in and modifying it
+    return _.filter(collection, function(element) {
+      return !test(element);
+    });
   };
 
-  // Produce a duplicate-free version of the array.
+  // Produces a duplicate-free version of the array.
   _.uniq = function(array) {
+    var results = [];
+    _.each(array, function(element, index) {
+      if (_.indexOf(results, element) === -1) {
+        results.push(element);
+      }
+    });
+    return results;
   };
-
 
   // Return the results of applying an iterator to each element.
   _.map = function(collection, iterator) {
