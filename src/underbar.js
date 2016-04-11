@@ -190,40 +190,43 @@
     };
   };
 
-  // Memorize an expensive function's results by storing them. You may assume
-  // that the function only takes primitives as arguments.
-  // memoize could be renamed to oncePerUniqueArgumentList; memoize does the
-  // same thing as once, but based on many sets of unique arguments.
-  //
-  // _.memoize should return a function that, when called, will check if it has
-  // already computed the result for the given argument and return that value
-  // instead if possible.
+  // Returns a function that, when called, will check if it has
+  // already computed the result for the given argument and return
+  // that value instead if possible.
   _.memoize = function(func) {
+    var memo = {};
+    return function() {
+      var args = Array.prototype.slice.call(arguments);
+      if (memo[args] !== undefined) {
+        return memo[args];
+      } else {
+        return memo[args] = func.apply(this, args);
+      }
+    };
   };
 
-  // Delays a function for the given number of milliseconds, and then calls
-  // it with the arguments supplied.
-  //
-  // The arguments for the original function are passed after the wait
-  // parameter. For example _.delay(someFunction, 500, 'a', 'b') will
-  // call someFunction('a', 'b') after 500ms
+  // Delays a function for the given number of milliseconds,
+  // and then calls it with the arguments supplied.
   _.delay = function(func, wait) {
+    var args = Array.prototype.slice.call(arguments, 2);
+    setTimeout(function() {
+      return func.apply(this, args);
+    }, wait);
   };
-
-
-  /**
-   * ADVANCED COLLECTION OPERATIONS
-   * ==============================
-   */
 
   // Randomizes the order of an array's contents.
-  //
-  // TIP: This function's test suite will ask that you not modify the original
-  // input array. For a tip on how to make a copy of an array, see:
-  // http://mdn.io/Array.prototype.slice
   _.shuffle = function(array) {
+    var arr = array.slice();
+    while (arr.toString() === array.toString()) {
+      for (var i = arr.length - 1; i > 0; i--) {
+        var random = Math.floor(Math.random() * (i + 1));
+        var temp = arr[random];
+        arr[random] = arr[i];
+        arr[i] = temp;
+      }
+    }
+    return arr;
   };
-
 
   /**
    * EXTRA CREDIT
