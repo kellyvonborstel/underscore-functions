@@ -149,61 +149,43 @@
     });
   };
 
-
-  /**
-   * OBJECTS
-   * =======
-   *
-   * In this section, we'll look at a couple of helpers for merging objects.
-   */
-
-  // Extend a given object with all the properties of the passed in
-  // object(s).
-  //
-  // Example:
-  //   var obj1 = {key1: "something"};
-  //   _.extend(obj1, {
-  //     key2: "something new",
-  //     key3: "something else new"
-  //   }, {
-  //     bla: "even more stuff"
-  //   }); // obj1 now contains key1, key2, key3 and bla
+  // Extends a given object with all the properties of the
+  // passed in object(s).
   _.extend = function(obj) {
+    var args = Array.prototype.slice.call(arguments);
+    return _.reduce(args, function(obj, arg) {
+      _.each(arg, function(value, key) {
+        obj[key] = value;
+      });
+      return obj;
+    }, obj);
   };
 
-  // Like extend, but doesn't ever overwrite a key that already
-  // exists in obj
+  // Extends a given object with all the properties of the
+  // passed in object(s), but doesn't ever overwrite a key that
+  // already exists in obj.
   _.defaults = function(obj) {
+    var args = Array.prototype.slice.call(arguments);
+    return _.reduce(args, function(obj, arg) {
+      _.each(arg, function(value, key) {
+        if (obj[key] === undefined) {
+          obj[key] = value;
+        }
+      });
+      return obj;
+    }, obj);
   };
 
-
-  /**
-   * FUNCTIONS
-   * =========
-   *
-   * Now we're getting into function decorators, which take in any function
-   * and return out a new version of the function that works somewhat differently
-   */
-
-  // Return a function that can be called at most one time. Subsequent calls
-  // should return the previously returned value.
+  // Returns a function that can be called at most one time.
+  // Subsequent calls should return the previously returned value.
   _.once = function(func) {
-    // TIP: These variables are stored in a "closure scope" (worth researching),
-    // so that they'll remain available to the newly-generated function every
-    // time it's called.
     var alreadyCalled = false;
     var result;
-
-    // TIP: We'll return a new function that delegates to the old one, but only
-    // if it hasn't been called before.
     return function() {
       if (!alreadyCalled) {
-        // TIP: .apply(this, arguments) is the standard way to pass on all of the
-        // infromation from one function call to another.
         result = func.apply(this, arguments);
         alreadyCalled = true;
       }
-      // The new function always returns the originally computed result.
       return result;
     };
   };
