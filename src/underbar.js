@@ -36,8 +36,8 @@
     }
   };
 
-  // Returns the index at which value can be found in the array, or -1 if value
-  // is not present in the array.
+  // Returns the index at which value can be found in the array, or -1 if
+  // value is not present in the array.
   _.indexOf = function(array, target){
     var result = -1;
     _.each(array, function(value, index) {
@@ -266,8 +266,8 @@
   _.zip = function() {
     var args = Array.prototype.slice.call(arguments);
     var results = [];
-    // sort the args from longest to shortest and get longest to
-    // determine how many zipped items there will be, how many times to loop
+    // sort the args from longest to shortest and get longest to determine
+    // how many zipped items there will be, so how many times to loop
     var longestArg = args.sort(function(a, b) {
       return b.length - a.length;
     })[0];
@@ -301,18 +301,53 @@
   // Takes an arbitrary number of arrays and produces an array that contains
   // every item shared between all the passed-in arrays.
   _.intersection = function() {
+    var args = Array.prototype.slice.call(arguments);
+    var results = [];
+    var shortestArg = args.sort(function(a, b) {
+      return a.length - b.length
+    })[0];
+    for (var i = 0; i < shortestArg.length; i++) {
+      var allContain = true;
+      _.each(args, function(arg) {
+        if (!_.contains(arg, shortestArg[i])) {
+          allContain = false;
+        }
+      });
+      if (allContain) {
+        results.push(shortestArg[i]);
+      }
+    }
+    return results;
   };
 
-  // Take the difference between one array and a number of other arrays.
+  // Takes the difference between one array and a number of other arrays.
   // Only the elements present in just the first array will remain.
   _.difference = function(array) {
+    var args = Array.prototype.slice.call(arguments);
+    var firstArg = args.shift();
+    var remaining = _.flatten(args);
+    var results = [];
+    for (var i = 0; i < firstArg.length; i++) {
+      if (!_.contains(remaining, firstArg[i])) {
+        results.push(firstArg[i]);
+      }
+    }
+    return results;
   };
 
-  // Returns a function, that, when invoked, will only be triggered at most once
-  // during a given window of time.  See the Underbar readme for extra details
-  // on this function.
-  //
-  // Note: This is difficult! It may take a while to implement.
+  // Returns a function, that, when invoked, will only be triggered at
+  // most once during a given window of time.
   _.throttle = function(func, wait) {
+    var currentlyWaiting = false;
+    return function() {
+      if (!currentlyWaiting) {
+        func.apply(this, arguments);
+        currentlyWaiting = true;
+        setTimeout(function() {
+          currentlyWaiting = false;
+        }, wait)
+      }
+    };
   };
+
 }());
