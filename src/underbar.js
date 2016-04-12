@@ -228,39 +228,74 @@
     return arr;
   };
 
-  /**
-   * EXTRA CREDIT
-   * =================
-   *
-   * Note: This is the end of the pre-course curriculum. Feel free to continue,
-   * but nothing beyond here is required.
-   */
-
-  // Calls the method named by functionOrKey on each value in the list.
-  // Note: You will need to learn a bit about .apply to complete this.
+  // Calls the method named by functionOrKey on each value in the
+  // list and returns a list of results.
   _.invoke = function(collection, functionOrKey, args) {
+    return _.map(collection, function(value) {
+      if (typeof functionOrKey === 'string') {
+        return value[functionOrKey].apply(value, args);
+      } else {
+        return functionOrKey.apply(value, args);
+      }
+    });
   };
 
-  // Sort the object's values by a criterion produced by an iterator.
-  // If iterator is a string, sort objects by that property with the name
-  // of that string. For example, _.sortBy(people, 'name') should sort
-  // an array of people by their name.
+  // Sorts the object's values by a criterion produced by an iterator.
+  // If iterator is a string, sort objects by that property with the
+  // name of that string.
   _.sortBy = function(collection, iterator) {
+    var newIterator = function(item) {
+      return typeof iterator === 'string' ? item[iterator] : iterator(item);
+    };
+    for (var i = collection.length; i > 0; i--) {
+      for (var j = 1; j < i; j++) {
+        // undefined items should be moved towards the end of the list
+        if (collection[j - 1] === undefined ||
+          newIterator(collection[j - 1]) > newIterator(collection[j])) {
+          var temp = collection[j - 1];
+          collection[j - 1] = collection[j];
+          collection[j] = temp;
+        }
+      }
+    }
+    return collection;
   };
 
-  // Zip together two or more arrays with elements of the same index
+  // Zips together two or more arrays with elements of the same index
   // going together.
-  //
-  // Example:
-  // _.zip(['a','b','c','d'], [1,2,3]) returns [['a',1], ['b',2], ['c',3], ['d',undefined]]
   _.zip = function() {
+    var args = Array.prototype.slice.call(arguments);
+    var results = [];
+    // sort the args from longest to shortest and get longest to
+    // determine how many zipped items there will be, how many times to loop
+    var longestArg = args.sort(function(a, b) {
+      return b.length - a.length;
+    })[0];
+    for (var i = 0; i < longestArg.length; i++) {
+      var zipped = [];
+      _.each(args, function(arg) {
+        zipped.push(arg[i]);
+      });
+      results.push(zipped);
+    }
+    return results;
   };
 
   // Takes a multidimensional array and converts it to a one-dimensional array.
   // The new array should contain all elements of the multidimensional array.
-  //
-  // Hint: Use Array.isArray to check if something is an array
   _.flatten = function(nestedArray, result) {
+    var result = result || [];
+    var unNest = function(array) {
+      _.each(array, function(element) {
+        if (Array.isArray(element)) {
+          unNest(element);
+        } else {
+          result.push(element);
+        }
+      });
+      return result;
+    };
+    return unNest(nestedArray);
   };
 
   // Takes an arbitrary number of arrays and produces an array that contains
