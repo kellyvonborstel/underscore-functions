@@ -1,4 +1,4 @@
-Underbar
+Underscore
 ==============
 
 I rewrote the following Underscore functions to better understand closures and higher order functions:
