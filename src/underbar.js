@@ -4,7 +4,7 @@
   window._ = {};
 
   // Returns whatever value is passed as the argument.
-  // Use this if a function needs an iterator when the user does not pass one.
+  // Use this if a function needs an iterator and none is passed in.
   _.identity = function(val) {
     return val;
   };
@@ -13,8 +13,8 @@
     return n === undefined ? array[0] : array.slice(0, n);
   };
 
-  // Returns an array of the last n elements of an array. If n is undefined,
-  // return just the last element.
+  // Returns an array of the last n elements of an array. If n is
+  // undefined, return the last element.
   _.last = function(array, n) {
     if (n === 0) {
       return [];
@@ -36,9 +36,9 @@
     }
   };
 
-  // Returns the index at which value can be found in the array, or -1 if
-  // value is not present in the array.
-  _.indexOf = function(array, target){
+  // Returns the index at which a target value can be found in the array,
+  // or -1 if target value is not present in the array.
+  _.indexOf = function(array, target) {
     var result = -1;
     _.each(array, function(value, index) {
       if (value === target && result === -1) {
@@ -86,26 +86,26 @@
     return results;
   };
 
-  // Takes an array of objects and returns and array of the values of
-  // a certain property in it. E.g. take an array of people and return
-  // an array of just their ages.
+  // Takes an array of objects and returns an array of the values of
+  // a certain property in it. For example, take an array of people and
+  // return an array of just their ages.
   _.pluck = function(collection, key) {
     return _.map(collection, function(object) {
       return object[key];
     });
   };
 
-  // Reduces an array or object to a single value by repetitively calling
+  // Reduces an array or object to a single value by calling
   // iterator(accumulator, item) for each item; accumulator should be
-  // the return value of the previous iterator call.
-  // You can pass in a starting value for the accumulator as the third argument
-  // to reduce. If no starting value is passed, the first element is used as
-  // the accumulator and is never passed to the iterator. In other words, in
-  // the case where a starting value is not passed, the iterator is not invoked
-  // until the second element, with the first element as its second argument.
+  // the return value of the previous iterator call. A starting value for the
+  // accumulator can be passed as the third argument to reduce. If no starting
+  // value is passed, the first element is used as the accumulator and is
+  // never passed to the iterator. So, in the case where a starting value is
+  // not passed, the iterator is not invoked until the second element, with
+  // the first element as its second argument.
   _.reduce = function(collection, iterator, accumulator) {
     if (arguments.length < 3) {
-      var accumulator = collection[0];
+      accumulator = collection[0];
       collection = collection.slice(1);
     }
     _.each(collection, function(item) {
@@ -114,7 +114,8 @@
     return accumulator;
   };
 
-  // Determines if the array or object contains a given value (using `===`).
+  // Determines if the array or object contains an item that is strictly
+  // equal to the passed in target.
   _.contains = function(collection, target) {
     return _.reduce(collection, function(wasFound, item) {
       if (wasFound) {
@@ -128,7 +129,7 @@
   // If no iterator is provided, provide a default one.
   _.every = function(collection, iterator) {
     if (arguments.length < 2) {
-      var iterator = _.identity;
+      iterator = _.identity;
     }
     return _.reduce(collection, function(allTrue, element) {
       if (!allTrue) {
@@ -142,7 +143,7 @@
   // If no iterator is provided, provide a default one.
   _.some = function(collection, iterator) {
     if (arguments.length < 2) {
-      var iterator = _.identity;
+      iterator = _.identity;
     }
     return !_.every(collection, function(element) {
       return !iterator(element);
@@ -162,7 +163,7 @@
   };
 
   // Extends a given object with all the properties of the
-  // passed in object(s), but doesn't ever overwrite a key that
+  // passed in object(s), but doesn't overwrite a key that
   // already exists in obj.
   _.defaults = function(obj) {
     var args = Array.prototype.slice.call(arguments);
@@ -192,7 +193,7 @@
 
   // Returns a function that, when called, will check if it has
   // already computed the result for the given argument and return
-  // that value instead if possible.
+  // that value instead.
   _.memoize = function(func) {
     var memo = {};
     return function() {
@@ -200,13 +201,14 @@
       if (memo[args] !== undefined) {
         return memo[args];
       } else {
-        return memo[args] = func.apply(this, args);
+        memo[args] = func.apply(this, args);
+        return memo[args];
       }
     };
   };
 
   // Delays a function for the given number of milliseconds,
-  // and then calls it with the arguments supplied.
+  // then calls it with the arguments supplied.
   _.delay = function(func, wait) {
     var args = Array.prototype.slice.call(arguments, 2);
     setTimeout(function() {
@@ -241,8 +243,8 @@
   };
 
   // Sorts the object's values by a criterion produced by an iterator.
-  // If iterator is a string, sort objects by that property with the
-  // name of that string.
+  // If iterator is a string, sort objects by that property named by
+  // that string.
   _.sortBy = function(collection, iterator) {
     var newIterator = function(item) {
       return typeof iterator === 'string' ? item[iterator] : iterator(item);
@@ -261,8 +263,8 @@
     return collection;
   };
 
-  // Zips together two or more arrays with elements of the same index
-  // going together.
+  // Zips together two or more arrays, placing elements of the same index
+  // together in a new array.
   _.zip = function() {
     var args = Array.prototype.slice.call(arguments);
     var results = [];
@@ -273,9 +275,9 @@
     })[0];
     for (var i = 0; i < longestArg.length; i++) {
       var zipped = [];
-      _.each(args, function(arg) {
-        zipped.push(arg[i]);
-      });
+      for (var j = 0; j < args.length; j++) {
+        zipped.push(args[j][i]);
+      }
       results.push(zipped);
     }
     return results;
@@ -284,7 +286,7 @@
   // Takes a multidimensional array and converts it to a one-dimensional array.
   // The new array should contain all elements of the multidimensional array.
   _.flatten = function(nestedArray, result) {
-    var result = result || [];
+    result = result || [];
     var unNest = function(array) {
       _.each(array, function(element) {
         if (Array.isArray(element)) {
@@ -304,15 +306,15 @@
     var args = Array.prototype.slice.call(arguments);
     var results = [];
     var shortestArg = args.sort(function(a, b) {
-      return a.length - b.length
+      return a.length - b.length;
     })[0];
     for (var i = 0; i < shortestArg.length; i++) {
       var allContain = true;
-      _.each(args, function(arg) {
-        if (!_.contains(arg, shortestArg[i])) {
+      for (var j = 0; j < args.length; j++) {
+        if (!_.contains(args[j], shortestArg[i])) {
           allContain = false;
         }
-      });
+      }
       if (allContain) {
         results.push(shortestArg[i]);
       }
@@ -321,7 +323,7 @@
   };
 
   // Takes the difference between one array and a number of other arrays.
-  // Only the elements present in just the first array will remain.
+  // Only the elements present in only the first array will remain.
   _.difference = function(array) {
     var args = Array.prototype.slice.call(arguments);
     var firstArg = args.shift();
@@ -345,7 +347,7 @@
         currentlyWaiting = true;
         setTimeout(function() {
           currentlyWaiting = false;
-        }, wait)
+        }, wait);
       }
     };
   };
